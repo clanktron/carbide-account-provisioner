@@ -84,3 +84,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.form-floating > label {
+  color: black; /* Use your theme's text color */
+  opacity: 0.8; /* Adjust opacity as needed for better visibility */
+}
