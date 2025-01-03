@@ -4,13 +4,13 @@
       <label for="accountDescription" class="form-label">Edit Description</label>
       <input type="text" v-model="robot.description" class="form-control" id="accountDescription">
     </div>
-    <div class="form-check mb-3">
-      <label for="accountActivated" class="form-check-label">Activated</label>
-      <input type="checkbox" v-model="robot.disable" class="form-check-input" id="accountActivated" :checked="!robot.disable" true-value=false false-value=true >
-    </div>
-    <div>
+    <div class="mb-3">
       <label for="accountExpiration" class="form-label">Expiration Date</label>
       <input type="date" v-model="formattedExpirationDate" class="form-control" id="accountExpiration">
+    </div>
+    <div class="form-check">
+      <label for="accountActivated" class="form-check-label">Activated</label>
+      <input type="checkbox" v-model="robot.disable" class="form-check-input" id="accountActivated" :checked="!robot.disable" true-value=false false-value=true >
     </div>
   </form>
 </template>
