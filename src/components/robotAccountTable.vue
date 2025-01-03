@@ -7,7 +7,9 @@
         <th scope="col">Description</th>
         <th scope="col">Activated</th>
         <th scope="col">Expiration Date</th>
-        <th scope="col"></th>
+        <th scope="col">
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">New</button>
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -26,6 +28,23 @@
     </tbody>
   </table>
 
+  <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="createModalLabel">Create New Account</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <createAccount :newRobot="newRobot"/>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="modal fade" v-for="robot in robots" :id="'editModal-' + robot.id" tabindex="-1" :aria-labelledby="'editModalLabel-' + robot.id" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -37,7 +56,6 @@
           <editRobotAccount :robot="robot"/>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
           <button type="button" class="btn btn-primary">Save changes</button>
         </div>
       </div>
@@ -47,11 +65,13 @@
 
 <script setup lang="ts">
 import editRobotAccount from './editRobotAccount.vue';
+import createAccount from './createAccount.vue';
 import { GetRobots } from '@/utils/requests';
-import type { Robot } from '../../env';
+import type { Robot, RobotCreate } from '../../env';
 import { onMounted, ref } from 'vue';
 
 const robots = ref<Robot[]>([])
+const newRobot = ref<RobotCreate>({})
 
 async function fetchRobots() {
   try {
