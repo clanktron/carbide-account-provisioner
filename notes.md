@@ -1,30 +1,3 @@
-# Sign In Avenues
+# Sign In Security Considerations
 
----
-
-Robot account with account provisioning credentials
-
-Options:
-- one sign in for all support team members/provisioners
-- secret key per support team member/provisioner (need to provision these in harbor ui manually)
-
-Not even sure robot accounts can access the harbor API considering the following:
-- Instructions found here seem to only be relevant for regular user accounts and not robot accounts: https://github.com/goharbor/harbor/wiki/Harbor-FAQs#api
-- This issue might be relevant: https://github.com/goharbor/harbor/issues/16398
-
----
-
-Traditional user login
-
-Only two types of users regular and admin (only admin can create robot accounts)
-
-Begs the question of which auth provider we're using:
-- database?
-- LDAP?
-- OIDC?
-
-Options:
-- one admin account for all support team members/provisioners
-- admin account per support team member/provisioner (need to provision these in harbor ui manually)
-
-Instructions here for admin user account API access: https://github.com/goharbor/harbor/wiki/Harbor-FAQs#api
+Robot accounts aren't meant to have interactive sessions so basic auth is the only authentication mechanism against the harbor api (no cookie tokens). This means credentials need to be stored in either `session-storage` or `local-storage`. Doing so leaves said credentials vulnerable to XSS. In an ideal world this is a non-issue since the pages don't take JS from any other sources, but browser extensions exist, etc.
