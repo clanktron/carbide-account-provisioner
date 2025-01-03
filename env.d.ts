@@ -23,6 +23,75 @@
 // }
 
 // the following types were auto-generated using ng-swagger-gen in the goharbor/harbor project @ commit a548ab705f8cb713ad0e4a9fb4e55c8b80237ac8
+export interface Robot {
+
+  /**
+   * The ID of the robot
+   */
+  id?: number;
+
+  /**
+   * The name of the robot
+   */
+  name?: string;
+
+  /**
+   * The description of the robot
+   */
+  description?: string;
+
+  /**
+   * The secret of the robot
+   */
+  secret?: string;
+
+  /**
+   * The level of the robot, project or system
+   */
+  level?: string;
+
+  /**
+   * The duration of the robot in days, duration must be either -1(Never) or a positive integer
+   */
+  duration?: null | number;
+
+  /**
+   * The editable status of the robot
+   */
+  editable?: boolean;
+
+  /**
+   * The disable status of the robot
+   */
+  disable?: boolean;
+
+  /**
+   * The expiration date of the robot
+   */
+  expires_at?: number;
+  permissions?: Array<RobotPermission>;
+
+  /**
+   * The type of the robot creator, like local(harbor_user) or robot.
+   */
+  creator_type?: string;
+
+  /**
+   * The reference of the robot creator, like the id of harbor user.
+   */
+  creator_ref?: number;
+
+  /**
+   * The creation time of the robot.
+   */
+  creation_time?: string;
+
+  /**
+   * The update time of the robot.
+   */
+  update_time?: string;
+}
+
 export interface RobotCreate {
 
   /**
