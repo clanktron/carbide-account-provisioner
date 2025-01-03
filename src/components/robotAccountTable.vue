@@ -7,6 +7,7 @@
         <th scope="col">Description</th>
         <th scope="col">Activated</th>
         <th scope="col">Expiration Date</th>
+        <th scope="col"></th>
       </tr>
     </thead>
     <tbody>
@@ -29,11 +30,11 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <div class="modal-title fs-5" :id="'editModalLabel-' + robot.id">Edit Robot Account: {{ robot.name }}</div>
+          <h1 class="modal-title fs-5" :id="'editModalLabel-' + robot.id">Edit Account: {{ robot.name }}</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" :aria-label="'Close ' + robot.name"></button>
         </div>
         <div class="modal-body">
-          Edit Description:
+          <editRobotAccount :robot="robot"/>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -45,6 +46,7 @@
 </template>
 
 <script setup lang="ts">
+import editRobotAccount from './editRobotAccount.vue';
 import { GetRobots } from '@/utils/requests';
 import type { Robot } from '../../env';
 import { onMounted, ref } from 'vue';
