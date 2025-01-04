@@ -1,42 +1,56 @@
 <template>
-  <form id="accountForm">
-      <div class="form-floating mb-3 text-truncate">
-          <input type="name" class="form-control" id="accountName" placeholder="Account Name" v-model="newRobot.name" required>
-          <label for="accountName">Enter Account Name</label>
+  <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="createModalLabel">Create New Account</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="accountForm">
+              <div class="form-floating mb-3 text-truncate">
+                  <input type="name" class="form-control" id="accountName" placeholder="Account Name" v-model="newRobot.name" required>
+                  <label for="accountName">Enter Account Name</label>
+              </div>
+              <div class="form-floating mb-3 text-truncate">
+                  <input type="description" class="form-control" id="description" placeholder="Description" v-model="newRobot.description">
+                  <label for="description">Enter Account Description</label>
+              </div>
+              <div class="form-floating mb-3 text-truncate">
+                  <input type="date" class="form-control" id="expirationDate" placeholder="Duration" v-model="formattedExpirationDate" required>
+                  <label for="duration">Enter Expiration Date</label>
+              </div>
+              <div class="form-check">
+                <label for="accountActivated" class="form-check-label">Activated</label>
+                <input type="checkbox" v-model="newRobot.disable" class="form-check-input" id="accountActivated" true-value=false false-value=true checked>
+              </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary">Submit</button>
+        </div>
       </div>
-      <div class="form-floating mb-3 text-truncate">
-          <input type="description" class="form-control" id="description" placeholder="Description" v-model="newRobot.description">
-          <label for="description">Enter Account Description</label>
-      </div>
-      <div class="form-floating mb-3 text-truncate">
-          <input type="date" class="form-control" id="expirationDate" placeholder="Duration" v-model="formattedExpirationDate" required>
-          <label for="duration">Enter Expiration Date</label>
-      </div>
-      <div class="form-check">
-        <label for="accountActivated" class="form-check-label">Activated</label>
-        <input type="checkbox" v-model="newRobot.disable" class="form-check-input" id="accountActivated" true-value=false false-value=true checked>
-      </div>
-  </form>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import type { RobotCreate } from '../../env';
-const props = defineProps<{
-  newRobot: RobotCreate;
-}>()
+
+const newRobot = ref<RobotCreate>({})
 
 const formattedExpirationDate = computed({
   get() {
-    if (!props.newRobot.duration) {
+    if (!newRobot.value.duration) {
       return "";
     }
-    const date = new Date(props.newRobot.duration * 1000); // Convert seconds to milliseconds
+    const date = new Date(newRobot.value.duration * 1000); // Convert seconds to milliseconds
     return date.toISOString().split('T')[0]; // Format as "YYYY-MM-DD"
   },
   set(newValue) {
     const date = new Date(newValue)
-    props.newRobot.duration = date.getTime();
+    newRobot.value.duration = date.getTime();
   },
 });
 </script>
