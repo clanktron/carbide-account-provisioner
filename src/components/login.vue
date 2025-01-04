@@ -3,8 +3,7 @@
     <h3 class="text-center fw-bold">Sign In</h3>
     <form
       id="loginForm"
-      method="POST"
-      action="https://harbor.claytonc.dev/c/login"
+      @submit.prevent="submitForm"
     >
       <div class="form-floating mb-3 m-4 text-truncate">
         <input
@@ -31,7 +30,7 @@
         <label for="floatingPassword">Enter Password</label>
       </div>
       <div class="text-center">
-        <button class="btn btn-primary" type="submit">Login</button>
+        <button class="btn btn-primary" type="submit" @click="submitForm">Login</button>
       </div>
     </form>
     <div v-if="errorMessage" class="text-danger text-center mt-2">{{ errorMessage }}</div>
@@ -40,23 +39,23 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { TestCredentials } from '@/utils/requests';
+import router from '@/router';
 const username = ref('');
 const password = ref('');
 const errorMessage = ref('');
-// @click="submitForm"
-// async function submitForm() {
-//     try {
-//         const authorized = await login(license.value)
-//         if (authorized) {
-//             console.debug("Login attempt succeeded, navigating to dashboard...")
-//             navigateTo('/dashboard')
-//         } else {
-//             console.debug("Login attempt failed")
-//             errorMessage.value = "Invalid license. Please try again.";
-//         }
-//     } catch (error) {
-//         console.error("error:", error);
-//         errorMessage.value = "An error occurred while processing your request. Please try again later.";
-//     }
-// }
+
+async function submitForm() {
+    try {
+        const authorized = await TestCredentials(username.value, password.value)
+        if (authorized) {
+            console.debug("Login attempt succeeded, navigating to dashboard...")
+            router.push('/robots')
+        } else {
+            errorMessage.value = "Invalid username or password. Please try again.";
+        }
+    } catch (error) {
+        errorMessage.value = "An error occurred while processing your request. Please try again later.";
+    }
+}
 </script>
