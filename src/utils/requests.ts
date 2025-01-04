@@ -17,9 +17,14 @@ function handleAuthError() {
 async function apiRequest(url: string, method: string, body?: any): Promise<any> {
     try {
         const authString = getSavedCredentials();
+        const headers: Record<string, string> = {
+            'Authorization': 'Basic ' + authString,
+            'Content-Type': body ? 'application/json' : '',  // Add Content-Type for POST/PUT requests
+        };
+
         const response = await fetch(url, {
             method,
-            headers: { 'Authorization': 'Basic ' + authString },
+            headers,
             credentials: "omit",
             body: body ? JSON.stringify(body) : undefined,
         });
@@ -66,9 +71,9 @@ export async function CreateRobot(robot: RobotCreate): Promise<Robot> {
 }
 
 export async function UpdateRobot(robot: Robot): Promise<Robot> {
-    return await apiRequest(`/api/v2.0/robots`, "PUT", robot);
+    return await apiRequest(`/api/v2.0/robots/`+robot.id, "PUT", robot);
 }
 
 export async function DeleteRobot(robotID: number): Promise<boolean> {
-    return await apiRequest(`/api/v2.0/robots`, "DELETE", robotID);
+    return await apiRequest(`/api/v2.0/robots/`+robotID, "DELETE", robotID);
 }
