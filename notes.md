@@ -1,3 +1,9 @@
-# Sign In Security Considerations
+# TODO
 
-Robot accounts aren't meant to have interactive sessions so basic auth is the only authentication mechanism against the harbor api (no cookie tokens). This means credentials need to be stored in either `session-storage` or `local-storage`. Doing so leaves said credentials vulnerable to XSS. In an ideal world this is a non-issue since the pages don't take JS from any other sources, but browser extensions exist, etc.
+- second modal after account creation for displaying created account and copying secret
+- expiration date handling
+    - validate dates at creation and edit time
+    - duration vs expires_at
+- better error handling for api interaction
+    - when to unset auth string etc
+- add delete button for existing accounts
