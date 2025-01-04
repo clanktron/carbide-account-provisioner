@@ -20,7 +20,7 @@
           ></button>
         </div>
         <div class="modal-body">
-          <form>
+          <form @submit.prevent="submitForm">
             <div class="mb-3">
               <label for="accountDescription" class="form-label">Edit Description</label>
               <input
@@ -54,7 +54,7 @@
           </form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary">Save changes</button>
+          <button type="button" class="btn btn-primary" @click="submitForm">Save changes</button>
         </div>
       </div>
     </div>
@@ -62,12 +62,14 @@
 </template>
 
 <script setup lang="ts">
+import { UpdateRobot } from '@/utils/requests';
 import type { Robot } from '../../env';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 const props = defineProps<{
   robot: Robot;
 }>();
+const errorMessage = ref('');
 
 const formattedExpirationDate = computed({
   get() {
@@ -82,4 +84,12 @@ const formattedExpirationDate = computed({
     props.robot.expires_at = date.getTime() / 1000; // Convert back to seconds
   },
 });
+
+async function submitForm() {
+  try {
+    const robot = await UpdateRobot(props.robot)
+  } catch (error) {
+    errorMessage.value = "An error occurred while processing your request. Please try again later.";
+  }
+}
 </script>
