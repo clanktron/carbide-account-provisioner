@@ -7,7 +7,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form id="accountForm">
+          <form id="accountForm" @submit.prevent="submitForm">
               <div class="form-floating mb-3 text-truncate">
                   <input type="name" class="form-control" id="accountName" placeholder="Account Name" v-model="newRobot.name" required>
                   <label for="accountName">Enter Account Name</label>
@@ -25,9 +25,10 @@
                 <input type="checkbox" v-model="newRobot.disable" class="form-check-input" id="accountActivated" true-value=false false-value=true checked>
               </div>
           </form>
+          <div v-if="errorMessage" class="text-danger text-center mt-2">{{ errorMessage }}</div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary">Submit</button>
+          <button type="button" class="btn btn-primary" @click="submitForm">Submit</button>
         </div>
       </div>
     </div>
@@ -37,8 +38,24 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import type { RobotCreate } from '../../env';
+import { CreateRobot } from '@/utils/requests';
 
-const newRobot = ref<RobotCreate>({})
+const newRobot = ref<RobotCreate>({
+  level: "system",
+  permissions: [
+    {
+      kind: "system",
+      namespace: "/",
+      access: [
+        {
+          resource: "registry",
+          action: "read"
+        }
+      ]
+    }
+  ]
+});
+const errorMessage = ref('');
 
 const formattedExpirationDate = computed({
   get() {
@@ -50,7 +67,15 @@ const formattedExpirationDate = computed({
   },
   set(newValue) {
     const date = new Date(newValue)
-    newRobot.value.duration = date.getTime();
+    newRobot.value.duration = date.getTime() / 1000;
   },
 });
+
+async function submitForm() {
+  try {
+    const robot = await CreateRobot(newRobot.value)
+  } catch (error) {
+    errorMessage.value = "An error occurred while processing your request. Please try again later.";
+  }
+}
 </script>
