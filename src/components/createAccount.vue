@@ -28,7 +28,20 @@
           <div v-if="errorMessage" class="text-danger text-center mt-2">{{ errorMessage }}</div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary" @click="submitForm">Submit</button>
+          <button type="button" class="btn btn-primary" @click="submitForm" data-bs-target="#createdModal" data-bs-toggle="modal">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="createdModal" tabindex="-1" aria-labelledby="createdModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="createdModalLabel">Created {{createdRobot.name}} successfully!</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Secret Key: {{createdRobot.secret}}
         </div>
       </div>
     </div>
@@ -37,7 +50,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import type { RobotCreate } from '../../env';
+import type { Robot, RobotCreate } from '../../env';
 import { CreateRobot } from '@/utils/requests';
 
 const newRobot = ref<RobotCreate>({
@@ -55,6 +68,7 @@ const newRobot = ref<RobotCreate>({
     }
   ]
 });
+const createdRobot = ref<Robot>({})
 const errorMessage = ref('');
 
 const formattedExpirationDate = computed({
@@ -73,7 +87,7 @@ const formattedExpirationDate = computed({
 
 async function submitForm() {
   try {
-    const robot = await CreateRobot(newRobot.value)
+    createdRobot.value = await CreateRobot(newRobot.value)
   } catch (error) {
     errorMessage.value = "An error occurred while processing your request. Please try again later.";
   }
