@@ -16,10 +16,10 @@
     <tbody>
       <tr v-for="robot in robots" :key="robot.id">
         <td>{{ robot.id }}</td>
-        <td>{{ robot.name }}</td>
+        <td>{{ robot.name ? robot.name.replace(/^robot\$/, '') : "Undefined" }}</td>
         <td>{{ robot.description }}</td>
         <td>{{ !robot.disable }}</td>
-        <td>{{ robot.creation_time }}</td>
+        <td>{{ robot.creation_time ? new Date(robot.creation_time).toDateString() : "N/A" }}</td>
         <td>{{ dateFromExpiresAt(robot.expires_at) }}</td>
         <td>
           <button type="button" class="btn btn-primary" data-bs-toggle="modal" :data-bs-target="'#editModal-' + robot.id">
