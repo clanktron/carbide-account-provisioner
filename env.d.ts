@@ -23,6 +23,30 @@
 // }
 
 // the following types were auto-generated using ng-swagger-gen in the goharbor/harbor project @ commit a548ab705f8cb713ad0e4a9fb4e55c8b80237ac8
+
+/**
+ * The error array that describe the errors got during the handling of request
+ */
+export interface Errors {
+  errors?: Array<Error>;
+}
+
+/**
+ * a model for all the error response coming from harbor
+ */
+export interface Error {
+
+  /**
+   * The error code
+   */
+  code?: string;
+
+  /**
+   * The error message
+   */
+  message?: string;
+}
+
 export interface Robot {
 
   /**
