@@ -1,4 +1,4 @@
-import type { Robot, RobotCreate } from "../../env"
+import type { Errors, Robot, RobotCreate } from "../../env"
 import router from "@/router";
 
 export function getSavedCredentials(): string {
@@ -34,8 +34,12 @@ async function apiRequest(url: string, method: string, body?: any): Promise<any>
         } else if (response.status === 401) {
             handleAuthError();
             throw new Error("Invalid credentials");
+        } else if (response.status === 400) {
+            const errors: Errors  = await response.json()
+            const errorMessage = errors.errors?.[0]?.message || "Bad Request"
+            throw new Error(errorMessage);
         } else {
-            throw new Error("Invalid response from server");
+            throw new Error("An error occurred while processing your request. Please try again later.");
         }
     } catch (error) {
         throw error;
