@@ -14,6 +14,10 @@ function handleAuthError() {
     router.push('/');
 }
 
+function clientError(httpStatusCode: number) {
+  return httpStatusCode > 401 && httpStatusCode < 500
+}
+
 export async function TestCredentials(username: string, password: string): Promise<boolean> {
     try {
         const authString = btoa(username+':'+password)
@@ -33,8 +37,9 @@ export async function TestCredentials(username: string, password: string): Promi
     }
 }
 
-export async function GetRobots(): Promise<Robot[]> {
-    const url = `/api/v2.0/robots`
+export async function GetRobots(page: number, perPage: number) {
+    const queryParams = '?page=' + page + '&page_size=' + perPage
+    const url = `/api/v2.0/robots`+queryParams
     const method = 'GET'
     try {
         const authString = getSavedCredentials();
@@ -47,11 +52,13 @@ export async function GetRobots(): Promise<Robot[]> {
             credentials: "omit",
         });
         if (response.ok) {
-            return await response.json() as Robot[];
+            const robots = await response.json() as Robot[]
+            const totalCount = Number(response.headers.get('x-total-count'))
+            return { robots, totalCount }
         } else if (response.status === 401) {
             handleAuthError();
             throw new Error("Invalid credentials");
-        } else if (response.status === 400) {
+        } else if (clientError(response.status)) {
             const errors: Errors  = await response.json()
             const errorMessage = errors.errors?.[0]?.message || "Bad Request"
             throw new Error(errorMessage);
@@ -84,7 +91,7 @@ export async function CreateRobot(robot: RobotCreate): Promise<Robot> {
         } else if (response.status === 401) {
             handleAuthError();
             throw new Error("Invalid credentials");
-        } else if (response.status === 400) {
+        } else if (clientError(response.status)) {
             const errors: Errors  = await response.json()
             const errorMessage = errors.errors?.[0]?.message || "Bad Request"
             throw new Error(errorMessage);
@@ -117,7 +124,7 @@ export async function UpdateRobot(robot: Robot): Promise<boolean> {
         } else if (response.status === 401) {
             handleAuthError();
             throw new Error("Invalid credentials");
-        } else if (response.status === 400) {
+        } else if (clientError(response.status)) {
             const errors: Errors  = await response.json()
             const errorMessage = errors.errors?.[0]?.message || "Bad Request"
             throw new Error(errorMessage);
@@ -147,7 +154,7 @@ export async function DeleteRobot(robotID: number): Promise<boolean> {
         } else if (response.status === 401) {
             handleAuthError();
             throw new Error("Invalid credentials");
-        } else if (response.status === 400) {
+        } else if (clientError(response.status)) {
             const errors: Errors  = await response.json()
             const errorMessage = errors.errors?.[0]?.message || "Bad Request"
             throw new Error(errorMessage);
