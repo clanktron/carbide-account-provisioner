@@ -54,7 +54,7 @@ async function submitForm() {
         } else {
             errorMessage.value = "Invalid username or password. Please try again.";
         }
-    } catch (error) {
+    } catch {
         errorMessage.value = "An error occurred while processing your request. Please try again later.";
     }
 }

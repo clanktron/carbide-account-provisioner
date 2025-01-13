@@ -38,7 +38,7 @@ export async function TestCredentials(username: string, password: string): Promi
 }
 
 export async function GetRobots(page: number, perPage: number, nameFilter: string) {
-    var fuzzySearchParam: string
+    let fuzzySearchParam: string
     if (!nameFilter) {
       fuzzySearchParam = ''
     } else {

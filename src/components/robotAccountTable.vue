@@ -36,7 +36,7 @@
     <button class="btn btn-primary" :disabled="onFirstPage" @click="currentPage--">
       Previous
     </button>
-    <button v-for="page in totalPages" :class="[ 'btn', (page == currentPage) ? 'btn-primary' : 'btn-secondary' ]" @click="currentPage = page">
+    <button v-for="page in totalPages" :key="page" :class="[ 'btn', (page == currentPage) ? 'btn-primary' : 'btn-secondary' ]" @click="currentPage = page">
       <span>{{ page }}</span>
     </button>
     <button class="btn btn-primary" :disabled="onLastPage" @click="currentPage++">
@@ -54,7 +54,7 @@ import createAccount from './createAccount.vue';
 import { GetRobots } from '@/utils/requests';
 import type { Robot } from '../../env';
 import { dateFromExpiresAt, sanitizeRobotName } from '@/utils/utils';
-import { computed } from '@vue/reactivity';
+import { computed } from 'vue';
 const totalCount = ref<number>(0)
 const currentPage = ref<number>(1)
 const perPage = ref<number>(10)

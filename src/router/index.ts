@@ -37,14 +37,14 @@ router.beforeEach((to, _, next) => {
     try {
       getSavedCredentials(); // Check if credentials are stored
       next();  // If credentials are valid, allow the navigation
-    } catch (error) {
+    } catch {
       next('/');  // If credentials are not valid, redirect to login page
     }
   } else if (to.matched.some(record => record.meta.loginPage)) {
     try {
       getSavedCredentials()
       next('/robots');
-    } catch (error) {
+    } catch {
       next()
     }
   }
