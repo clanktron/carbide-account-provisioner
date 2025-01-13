@@ -39,16 +39,17 @@
                 id="accountExpiration"
               />
             </div>
-            <div class="form-check">
+            <div class="form-check form-switch">
               <label for="accountActivated" class="form-check-label">Activated</label>
               <input
                 type="checkbox"
                 v-model="updatedRobot.disable"
                 class="form-check-input"
                 id="accountActivated"
+                role="switch"
                 :checked="!updatedRobot.disable"
-                true-value="false"
-                false-value="true"
+                :true-value="false"
+                :false-value="true"
               />
             </div>
           </form>

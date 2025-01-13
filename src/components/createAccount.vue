@@ -20,9 +20,9 @@
                   <input type="number" class="form-control" id="duration" placeholder="Duration" v-model="newRobot.duration" required>
                   <label for="duration">Enter # of Days Till Expiry</label>
               </div>
-              <div class="form-check">
+              <div class="form-check form-switch">
                 <label for="accountActivated" class="form-check-label">Activated</label>
-                <input type="checkbox" v-model="newRobot.disable" class="form-check-input" id="accountActivated" true-value=false false-value=true checked>
+                <input type="checkbox" v-model="newRobot.disable" class="form-check-input" id="accountActivated" role="switch" :true-value="false" :false-value="true" checked>
               </div>
           </form>
           <div v-if="errorMessage" class="text-danger text-center mt-2">{{ errorMessage }}</div>
