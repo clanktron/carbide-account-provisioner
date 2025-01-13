@@ -6,6 +6,7 @@
         <th scope="col">Name</th>
         <th scope="col">Description</th>
         <th scope="col">Activated</th>
+        <th scope="col">Created At</th>
         <th scope="col">Expiration Date</th>
         <th scope="col">
           <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">New</button>
@@ -18,12 +19,9 @@
         <td>{{ robot.name }}</td>
         <td>{{ robot.description }}</td>
         <td>{{ !robot.disable }}</td>
+        <td>{{ robot.creation_time }}</td>
         <td>
-          {{
-            isValidDate(robot.expires_at)
-              ? new Date(robot.expires_at! * 1000).toDateString()
-              : 'Invalid Date'
-          }}
+          {{ dateFromExpiresAt(robot.expires_at) }}
         </td>
         <td>
           <button type="button" class="btn btn-primary" data-bs-toggle="modal" :data-bs-target="'#editModal-' + robot.id">
@@ -44,7 +42,7 @@ import createAccount from './createAccount.vue';
 import { GetRobots } from '@/utils/requests';
 import type { Robot } from '../../env';
 import { onMounted, ref } from 'vue';
-import { isValidDate } from '@/utils/utils';
+import { dateFromExpiresAt } from '@/utils/utils';
 
 const robots = ref<Robot[]>([])
 
