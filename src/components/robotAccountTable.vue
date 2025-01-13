@@ -18,7 +18,13 @@
         <td>{{ robot.name }}</td>
         <td>{{ robot.description }}</td>
         <td>{{ !robot.disable }}</td>
-        <td>{{ robot.expires_at ? new Date(robot.expires_at * 1000).toDateString() : 'N/A' }}</td>
+        <td>
+          {{
+            isValidDate(robot.expires_at)
+              ? new Date(robot.expires_at! * 1000).toDateString()
+              : 'Invalid Date'
+          }}
+        </td>
         <td>
           <button type="button" class="btn btn-primary" data-bs-toggle="modal" :data-bs-target="'#editModal-' + robot.id">
             Edit
@@ -38,6 +44,7 @@ import createAccount from './createAccount.vue';
 import { GetRobots } from '@/utils/requests';
 import type { Robot } from '../../env';
 import { onMounted, ref } from 'vue';
+import { isValidDate } from '@/utils/utils';
 
 const robots = ref<Robot[]>([])
 
