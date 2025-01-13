@@ -37,8 +37,15 @@ export async function TestCredentials(username: string, password: string): Promi
     }
 }
 
-export async function GetRobots(page: number, perPage: number) {
-    const queryParams = '?page=' + page + '&page_size=' + perPage
+export async function GetRobots(page: number, perPage: number, nameFilter: string) {
+    var fuzzySearchParam: string
+    if (!nameFilter) {
+      fuzzySearchParam = ''
+    } else {
+      fuzzySearchParam = '&q=name=~' + nameFilter
+    }
+    const pageParams = '?page=' + page + '&page_size=' + perPage
+    const queryParams = pageParams + fuzzySearchParam
     const url = `/api/v2.0/robots`+queryParams
     const method = 'GET'
     try {

@@ -1,4 +1,5 @@
 <template>
+  <input type="text" class="form-control mb-3" placeholder="Search for an account by name..." v-model="searchedName">
   <table class="table table-hover">
     <thead>
       <tr>
@@ -26,24 +27,24 @@
           <button type="button" class="btn btn-primary" data-bs-toggle="modal" :data-bs-target="'#editModal-' + robot.id">
             Edit
           </button>
-          <editRobotAccount :robot="robot" @accountsUpdated="loadCurrentPage"/>
+          <editRobotAccount :robot="robot" @accountsUpdated="fetchRobots"/>
         </td>
       </tr>
     </tbody>
   </table>
   <div class="d-flex justify-content-center gap-3">
-    <button class="btn btn-primary" :disabled="onFirstPage" @click="previousPage">
+    <button class="btn btn-primary" :disabled="onFirstPage" @click="currentPage--">
       Previous
     </button>
     <button v-for="page in totalPages" :class="[ 'btn', (page == currentPage) ? 'btn-primary' : 'btn-secondary' ]" @click="currentPage = page">
       <span>{{ page }}</span>
     </button>
-    <button class="btn btn-primary" :disabled="onLastPage" @click="nextPage">
+    <button class="btn btn-primary" :disabled="onLastPage" @click="currentPage++">
       Next
     </button>
   </div>
 
-  <createAccount @accountCreated="loadCurrentPage"/>
+  <createAccount @accountCreated="fetchRobots"/>
 </template>
 
 <script setup lang="ts">
@@ -56,8 +57,9 @@ import { dateFromExpiresAt, sanitizeRobotName } from '@/utils/utils';
 import { computed } from '@vue/reactivity';
 const totalCount = ref<number>(0)
 const currentPage = ref<number>(1)
-const perPage = ref<number>(5)
+const perPage = ref<number>(10)
 const robots = ref<Robot[]>([]);
+const searchedName = ref<string>('')
 
 const totalPages = computed(() => {
   return Math.ceil(totalCount.value / perPage.value)
@@ -69,9 +71,9 @@ const onLastPage = computed(() => {
   return currentPage.value >= totalPages.value
 })
 
-async function fetchRobots(page: number, perPage: number) {
+async function fetchRobots() {
   try {
-    const result = await GetRobots(page, perPage);
+    const result = await GetRobots(currentPage.value, perPage.value, searchedName.value);
     robots.value = result.robots
     totalCount.value = result.totalCount
   } catch (error) {
@@ -79,29 +81,11 @@ async function fetchRobots(page: number, perPage: number) {
   }
 }
 
-const previousPage = async () => {
-  if (!onFirstPage.value) {
-    currentPage.value--;
-    await loadCurrentPage();
-  }
-};
-
-const nextPage = async () => {
-  if (!onLastPage.value) {
-    currentPage.value++;
-    await loadCurrentPage();
-  }
-};
-
-watch(currentPage, async () => {
-  await loadCurrentPage()
+watch([currentPage, searchedName], async () => {
+  await fetchRobots()
 })
 
-async function loadCurrentPage() {
-  fetchRobots(currentPage.value, perPage.value);
-}
-
 onMounted(() => {
-  loadCurrentPage()
+  fetchRobots()
 });
 </script>
