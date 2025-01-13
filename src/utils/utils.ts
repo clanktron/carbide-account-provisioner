@@ -1,4 +1,10 @@
-export function isValidDate(timestamp: number | null | undefined): boolean {
-  if (!timestamp) return false;
-  return timestamp > 0 && timestamp < 2147483647;
+export function dateFromExpiresAt(timestamp: number | null | undefined): string {
+  if (timestamp === null || timestamp === undefined) {
+    return "Invalid Date";
+  }
+  return new Date(timestamp * 1000).toDateString();
+}
+
+export function isValidDuration(duration: number) {
+  return (duration > 0 && duration < 2147483647)
 }
