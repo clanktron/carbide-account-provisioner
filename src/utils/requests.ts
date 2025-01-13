@@ -14,38 +14,6 @@ function handleAuthError() {
     router.push('/');
 }
 
-async function apiRequest(url: string, method: string, body?: any): Promise<any> {
-    try {
-        const authString = getSavedCredentials();
-        const headers: Record<string, string> = {
-            'Authorization': 'Basic ' + authString,
-            'Content-Type': body ? 'application/json' : '',  // Add Content-Type for POST/PUT requests
-        };
-
-        const response = await fetch(url, {
-            method,
-            headers,
-            credentials: "omit",
-            body: body ? JSON.stringify(body) : undefined,
-        });
-
-        if (response.ok) {
-            return await response.json();
-        } else if (response.status === 401) {
-            handleAuthError();
-            throw new Error("Invalid credentials");
-        } else if (response.status === 400) {
-            const errors: Errors  = await response.json()
-            const errorMessage = errors.errors?.[0]?.message || "Bad Request"
-            throw new Error(errorMessage);
-        } else {
-            throw new Error("An error occurred while processing your request. Please try again later.");
-        }
-    } catch (error) {
-        throw error;
-    }
-}
-
 export async function TestCredentials(username: string, password: string): Promise<boolean> {
     try {
         const authString = btoa(username+':'+password)
@@ -66,17 +34,127 @@ export async function TestCredentials(username: string, password: string): Promi
 }
 
 export async function GetRobots(): Promise<Robot[]> {
-    return await apiRequest(`/api/v2.0/robots`, "GET");
+    const url = `/api/v2.0/robots`
+    const method = 'GET'
+    try {
+        const authString = getSavedCredentials();
+        const headers: Record<string, string> = {
+            'Authorization': 'Basic ' + authString,
+        };
+        const response = await fetch(url, {
+            method,
+            headers,
+            credentials: "omit",
+        });
+        if (response.ok) {
+            return await response.json() as Robot[];
+        } else if (response.status === 401) {
+            handleAuthError();
+            throw new Error("Invalid credentials");
+        } else if (response.status === 400) {
+            const errors: Errors  = await response.json()
+            const errorMessage = errors.errors?.[0]?.message || "Bad Request"
+            throw new Error(errorMessage);
+        } else {
+            throw new Error("An error occurred while processing your request. Please try again later.");
+        }
+    } catch (error) {
+        throw error;
+    }
 }
 
 export async function CreateRobot(robot: RobotCreate): Promise<Robot> {
-    return await apiRequest(`/api/v2.0/robots`, "POST", robot);
+    const url = `/api/v2.0/robots`
+    const method = 'POST'
+    try {
+        const authString = getSavedCredentials();
+        const headers: Record<string, string> = {
+            'Authorization': 'Basic ' + authString,
+            'Content-Type': 'application/json'
+        };
+
+        const response = await fetch(url, {
+            method,
+            headers,
+            credentials: "omit",
+            body: JSON.stringify(robot)
+        });
+        if (response.ok) {
+            return await response.json() as Robot;
+        } else if (response.status === 401) {
+            handleAuthError();
+            throw new Error("Invalid credentials");
+        } else if (response.status === 400) {
+            const errors: Errors  = await response.json()
+            const errorMessage = errors.errors?.[0]?.message || "Bad Request"
+            throw new Error(errorMessage);
+        } else {
+            throw new Error("An error occurred while processing your request. Please try again later.");
+        }
+    } catch (error) {
+        throw error;
+    }
 }
 
-export async function UpdateRobot(robot: Robot): Promise<Robot> {
-    return await apiRequest(`/api/v2.0/robots/`+robot.id, "PUT", robot);
+export async function UpdateRobot(robot: Robot): Promise<boolean> {
+    const url = `/api/v2.0/robots/`+robot.id
+    const method = 'PUT'
+    try {
+        const authString = getSavedCredentials();
+        const headers: Record<string, string> = {
+            'Authorization': 'Basic ' + authString,
+            'Content-Type': 'application/json'
+        };
+
+        const response = await fetch(url, {
+            method,
+            headers,
+            credentials: "omit",
+            body: JSON.stringify(robot)
+        });
+        if (response.ok) {
+            return true
+        } else if (response.status === 401) {
+            handleAuthError();
+            throw new Error("Invalid credentials");
+        } else if (response.status === 400) {
+            const errors: Errors  = await response.json()
+            const errorMessage = errors.errors?.[0]?.message || "Bad Request"
+            throw new Error(errorMessage);
+        } else {
+            throw new Error("An error occurred while processing your request. Please try again later.");
+        }
+    } catch (error) {
+        throw error;
+    }
 }
 
 export async function DeleteRobot(robotID: number): Promise<boolean> {
-    return await apiRequest(`/api/v2.0/robots/`+robotID, "DELETE", robotID);
+    const url = `/api/v2.0/robots/`+robotID
+    const method = 'DELETE'
+    try {
+        const authString = getSavedCredentials();
+        const headers: Record<string, string> = {
+            'Authorization': 'Basic ' + authString,
+        };
+        const response = await fetch(url, {
+            method,
+            headers,
+            credentials: "omit",
+        });
+        if (response.ok) {
+            return true
+        } else if (response.status === 401) {
+            handleAuthError();
+            throw new Error("Invalid credentials");
+        } else if (response.status === 400) {
+            const errors: Errors  = await response.json()
+            const errorMessage = errors.errors?.[0]?.message || "Bad Request"
+            throw new Error(errorMessage);
+        } else {
+            throw new Error("An error occurred while processing your request. Please try again later.");
+        }
+    } catch (error) {
+        throw error;
+    }
 }
