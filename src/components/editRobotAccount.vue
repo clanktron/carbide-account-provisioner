@@ -40,6 +40,7 @@
                 v-model="updatedRobot.duration"
                 class="form-control"
                 id="accountExpiration"
+                min="-1"
               />
             </div>
             <div class="form-check form-switch">

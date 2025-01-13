@@ -40,6 +40,7 @@
                     class="form-control"
                     id="duration"
                     v-model="newRobot.duration"
+                    min="-1"
                     required
                   >
               </div>
