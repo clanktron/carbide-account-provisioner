@@ -17,8 +17,8 @@
                   <label for="description">Enter Account Description</label>
               </div>
               <div class="form-floating mb-3 text-truncate">
-                  <input type="date" class="form-control" id="expirationDate" placeholder="Duration" v-model="formattedExpirationDate" required>
-                  <label for="duration">Enter Expiration Date</label>
+                  <input type="number" class="form-control" id="duration" placeholder="Duration" v-model="newRobot.duration" required>
+                  <label for="duration">Enter # of Days Till Expiry</label>
               </div>
               <div class="form-check">
                 <label for="accountActivated" class="form-check-label">Activated</label>
@@ -28,7 +28,10 @@
           <div v-if="errorMessage" class="text-danger text-center mt-2">{{ errorMessage }}</div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary" @click="submitForm" data-bs-target="#createdModal" data-bs-toggle="modal">Submit</button>
+          <button type="button" class="btn btn-primary" @click="submitForm">
+            <span v-if="loading" class="spinner-border" role="status" aria-hidden="true"></span>
+            <span v-else>Submit</span>
+          </button>
         </div>
       </div>
     </div>
@@ -49,11 +52,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import type { Robot, RobotCreate } from '../../env';
 import { CreateRobot } from '@/utils/requests';
+import * as bootstrap from 'bootstrap';
 
-const newRobot = ref<RobotCreate>({
+const newRobotTempl = ref<RobotCreate>({
   level: "system",
   permissions: [
     {
@@ -70,26 +74,32 @@ const newRobot = ref<RobotCreate>({
 });
 const createdRobot = ref<Robot>({})
 const errorMessage = ref('');
-
-const formattedExpirationDate = computed({
-  get() {
-    if (!newRobot.value.duration) {
-      return "";
-    }
-    const date = new Date(newRobot.value.duration * 1000); // Convert seconds to milliseconds
-    return date.toISOString().split('T')[0]; // Format as "YYYY-MM-DD"
-  },
-  set(newValue) {
-    const date = new Date(newValue)
-    newRobot.value.duration = date.getTime() / 1000;
-  },
-});
+const loading = ref(false)
+const emit = defineEmits(['accountCreated']);
+let newRobot = JSON.parse(JSON.stringify(newRobotTempl.value))
 
 async function submitForm() {
+  loading.value = true;
+  errorMessage.value = "";
+
   try {
-    createdRobot.value = await CreateRobot(newRobot.value)
+    createdRobot.value = await CreateRobot(newRobot);
+    const createModalEl = document.getElementById("createModal");
+    if (createModalEl) {
+      const createModal = bootstrap.Modal.getInstance(createModalEl);
+      createModal?.hide()
+    }
+    const createdModalEl = document.getElementById("createdModal");
+    if (createdModalEl) {
+      const createdModal = new bootstrap.Modal(createdModalEl);
+      createdModal.show();
+    }
+    newRobot = newRobotTempl.value
+    emit('accountCreated')
   } catch (error) {
-    errorMessage.value = "An error occurred while processing your request. Please try again later.";
+    errorMessage.value = error instanceof Error ? error.message : String(error)
+  } finally {
+    loading.value = false;
   }
 }
 </script>

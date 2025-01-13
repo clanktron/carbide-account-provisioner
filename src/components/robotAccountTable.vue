@@ -20,41 +20,43 @@
         <td>{{ robot.description }}</td>
         <td>{{ !robot.disable }}</td>
         <td>{{ robot.creation_time }}</td>
-        <td>
-          {{ dateFromExpiresAt(robot.expires_at) }}
-        </td>
+        <td>{{ dateFromExpiresAt(robot.expires_at) }}</td>
         <td>
           <button type="button" class="btn btn-primary" data-bs-toggle="modal" :data-bs-target="'#editModal-' + robot.id">
             Edit
           </button>
-          <editRobotAccount :robot="robot"/>
+          <editRobotAccount :robot="robot" @accountsUpdated="handleAccountsUpdated"/>
         </td>
       </tr>
     </tbody>
   </table>
-
-  <createAccount/>
+  <createAccount @accountCreated="handleAccountsUpdated"/>
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
 import editRobotAccount from './editRobotAccount.vue';
 import createAccount from './createAccount.vue';
 import { GetRobots } from '@/utils/requests';
 import type { Robot } from '../../env';
-import { onMounted, ref } from 'vue';
 import { dateFromExpiresAt } from '@/utils/utils';
 
-const robots = ref<Robot[]>([])
+const robots = ref<Robot[]>([]);
 
 async function fetchRobots() {
   try {
-    robots.value = await GetRobots()
+    robots.value = await GetRobots();
   } catch (error) {
-      console.error("error:", error);
+    console.error("Error fetching robots:", error);
   }
 }
 
+async function handleAccountsUpdated() {
+  // Add a small delay to ensure all modal cleanup is complete
+  setTimeout(fetchRobots, 200);
+}
+
 onMounted(() => {
-  fetchRobots()
-})
+  fetchRobots();
+});
 </script>
