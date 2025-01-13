@@ -7,30 +7,61 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form id="accountForm" @submit.prevent="submitForm">
+          <form id="accountForm" @submit.prevent="submitForm" ref="form">
               <div class="form-floating mb-3 text-truncate">
-                  <input type="name" class="form-control" id="accountName" placeholder="Account Name" v-model="newRobot.name" required>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="accountName"
+                    placeholder="Account Name"
+                    v-model="newRobot.name"
+                    required
+                    minlength="1"
+                  >
                   <label for="accountName">Enter Account Name</label>
               </div>
               <div class="form-floating mb-3 text-truncate">
-                  <input type="description" class="form-control" id="description" placeholder="Description" v-model="newRobot.description">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="description"
+                    placeholder="Description"
+                    v-model="newRobot.description"
+                  >
                   <label for="description">Enter Account Description</label>
               </div>
               <div class="form-floating mb-3 text-truncate">
-                  <input type="number" class="form-control" id="duration" placeholder="Duration" v-model="newRobot.duration" required>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="duration"
+                    placeholder="Duration"
+                    v-model="newRobot.duration"
+                    required
+                    min="1"
+                  >
                   <label for="duration">Enter # of Days Till Expiry</label>
               </div>
               <div class="form-check form-switch">
                 <label for="accountActivated" class="form-check-label">Activated</label>
-                <input type="checkbox" v-model="newRobot.disable" class="form-check-input" id="accountActivated" role="switch" :true-value="false" :false-value="true" checked>
+                <input
+                  type="checkbox"
+                  v-model="newRobot.disable"
+                  class="form-check-input"
+                  id="accountActivated"
+                  role="switch"
+                  :true-value="false"
+                  :false-value="true"
+                  checked
+                >
               </div>
           </form>
           <div v-if="errorMessage" class="text-danger text-center mt-2">{{ errorMessage }}</div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary" @click="submitForm">
-            <span v-if="loading" class="spinner-border" role="status" aria-hidden="true"></span>
-            <span v-else>Submit</span>
+          <button type="submit" class="btn btn-primary" @click="submitForm" :disabled="loading">
+            <span v-if="loading" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+            <span>Submit</span>
           </button>
         </div>
       </div>
@@ -57,6 +88,8 @@ import type { Robot, RobotCreate } from '../../env';
 import { CreateRobot } from '@/utils/requests';
 import * as bootstrap from 'bootstrap';
 
+const form = ref<HTMLFormElement | null>(null);
+
 const newRobotTempl = ref<RobotCreate>({
   level: "system",
   permissions: [
@@ -72,13 +105,19 @@ const newRobotTempl = ref<RobotCreate>({
     }
   ]
 });
-const createdRobot = ref<Robot>({})
+const createdRobot = ref<Robot>({});
 const errorMessage = ref('');
-const loading = ref(false)
+const loading = ref(false);
 const emit = defineEmits(['accountCreated']);
-let newRobot = JSON.parse(JSON.stringify(newRobotTempl.value))
+let newRobot = JSON.parse(JSON.stringify(newRobotTempl.value));
 
 async function submitForm() {
+  // Check form validity before proceeding
+  if (!form.value?.checkValidity()) {
+    form.value?.reportValidity();
+    return;
+  }
+
   loading.value = true;
   errorMessage.value = "";
 
@@ -87,17 +126,17 @@ async function submitForm() {
     const createModalEl = document.getElementById("createModal");
     if (createModalEl) {
       const createModal = bootstrap.Modal.getInstance(createModalEl);
-      createModal?.hide()
+      createModal?.hide();
     }
     const createdModalEl = document.getElementById("createdModal");
     if (createdModalEl) {
       const createdModal = new bootstrap.Modal(createdModalEl);
       createdModal.show();
     }
-    newRobot = newRobotTempl.value
-    emit('accountCreated')
+    newRobot = JSON.parse(JSON.stringify(newRobotTempl.value));
+    emit('accountCreated');
   } catch (error) {
-    errorMessage.value = error instanceof Error ? error.message : String(error)
+    errorMessage.value = error instanceof Error ? error.message : String(error);
   } finally {
     loading.value = false;
   }
