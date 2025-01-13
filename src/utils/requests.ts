@@ -38,7 +38,6 @@ async function apiRequest(url: string, method: string, body?: any): Promise<any>
             throw new Error("Invalid response from server");
         }
     } catch (error) {
-        handleAuthError();
         throw error;
     }
 }
