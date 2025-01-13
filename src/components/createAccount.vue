@@ -30,17 +30,18 @@
                   >
                   <label for="description">Enter Account Description</label>
               </div>
-              <div class="form-floating mb-3 text-truncate">
+              <div class="mb-3">
+                  <label class="form-label" for="duration">
+                    <span class="me-1">Enter # of Days Till Expiry</span>
+                    <i class="bi bi-info-circle" data-bs-toggle="popover" data-bs-placement="right" :data-bs-content="daysTillExpiryMessage" data-bs-trigger="hover focus"></i>
+                  </label>
                   <input
                     type="number"
                     class="form-control"
                     id="duration"
-                    placeholder="Duration"
                     v-model="newRobot.duration"
                     required
-                    min="1"
                   >
-                  <label for="duration">Enter # of Days Till Expiry</label>
               </div>
               <div class="form-check form-switch">
                 <label for="accountActivated" class="form-check-label">Activated</label>
@@ -83,10 +84,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import type { Robot, RobotCreate } from '../../env';
 import { CreateRobot } from '@/utils/requests';
 import * as bootstrap from 'bootstrap';
+import { daysTillExpiryMessage } from '@/utils/utils';
 
 const form = ref<HTMLFormElement | null>(null);
 
@@ -141,4 +143,9 @@ async function submitForm() {
     loading.value = false;
   }
 }
+
+onMounted(() => {
+  const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+  const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+})
 </script>

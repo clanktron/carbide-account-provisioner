@@ -31,7 +31,10 @@
               />
             </div>
             <div class="mb-3">
-              <label for="accountExpiration" class="form-label">Enter # of Days Till Expiry</label>
+              <label for="accountExpiration" class="form-label">
+                <span class="me-1">Enter # of Days Till Expiry</span>
+                <i class="bi bi-info-circle" data-bs-toggle="popover" data-bs-placement="right" :data-bs-content="daysTillExpiryMessage" data-bs-trigger="hover focus"></i>
+              </label>
               <input
                 type="number"
                 v-model="updatedRobot.duration"
@@ -75,6 +78,7 @@ import { DeleteRobot, UpdateRobot } from '@/utils/requests';
 import type { Robot } from '../../env';
 import { ref, onMounted, onUnmounted } from 'vue';
 import * as bootstrap from 'bootstrap';
+import { daysTillExpiryMessage, sanitizeRobotName } from '@/utils/utils';
 
 const emit = defineEmits(['accountsUpdated']);
 const props = defineProps<{
@@ -148,4 +152,9 @@ async function deleteAccount() {
     deleteProcessing.value = false;
   }
 }
+
+onMounted(() => {
+  const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+  const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+})
 </script>
