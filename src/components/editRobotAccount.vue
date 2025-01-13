@@ -10,7 +10,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" :id="'editmodallabel-' + updatedRobot.id">
-            Edit Account: {{ updatedRobot.name }}
+            Edit {{ sanitizeRobotName(updatedRobot.name) }}'s Account
           </h1>
           <button
             type="button"

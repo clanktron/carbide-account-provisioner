@@ -7,7 +7,7 @@
         <th scope="col">Description</th>
         <th scope="col">Activated</th>
         <th scope="col">Created At</th>
-        <th scope="col">Expiration Date</th>
+        <th scope="col">Expires</th>
         <th scope="col">
           <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">New</button>
         </th>
@@ -16,11 +16,12 @@
     <tbody>
       <tr v-for="robot in robots" :key="robot.id">
         <td>{{ robot.id }}</td>
-        <td>{{ robot.name ? robot.name.replace(/^robot\$/, '') : "Undefined" }}</td>
+        <td>{{ sanitizeRobotName(robot.name) }}</td>
         <td>{{ robot.description }}</td>
         <td>{{ !robot.disable }}</td>
         <td>{{ robot.creation_time ? new Date(robot.creation_time).toDateString() : "N/A" }}</td>
-        <td>{{ dateFromExpiresAt(robot.expires_at) }}</td>
+        <td v-if="robot.duration == -1">Never</td>
+        <td v-else>{{ dateFromExpiresAt(robot.expires_at) }}</td>
         <td>
           <button type="button" class="btn btn-primary" data-bs-toggle="modal" :data-bs-target="'#editModal-' + robot.id">
             Edit
@@ -39,7 +40,7 @@ import editRobotAccount from './editRobotAccount.vue';
 import createAccount from './createAccount.vue';
 import { GetRobots } from '@/utils/requests';
 import type { Robot } from '../../env';
-import { dateFromExpiresAt } from '@/utils/utils';
+import { dateFromExpiresAt, sanitizeRobotName } from '@/utils/utils';
 
 const robots = ref<Robot[]>([]);
 
